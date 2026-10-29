@@ -1,0 +1,28 @@
+<div class="page-head"><div><h1>Images and Media</h1><p class="muted">JPEG, PNG, WebP or GIF up to 3 MB. Images are stored in the database, so they survive redeploys.</p></div></div>
+<% if (can('media.upload')) { %>
+<form class="card row-form" method="post" action="/admin/media/upload" enctype="multipart/form-data" data-loading>
+  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+  <label class="field grow"><span>Image</span><input class="input" type="file" name="file" accept="image/jpeg,image/png,image/webp,image/gif" required data-preview="#upload-preview"></label>
+  <label class="field grow"><span>Alternative text</span><input class="input" name="alt" maxlength="200" required placeholder="Describe the image for screen readers"></label>
+  <img id="upload-preview" class="thumb-lg" alt="" hidden>
+  <button class="btn btn-primary" type="submit"><span class="spin" aria-hidden="true"></span><%- icon('plus', 16) %>Upload</button>
+</form>
+<% } %>
+<% if (!items.length) { %><div class="card empty-state"><%- icon('image', 28) %><p>No images yet. Upload one above.</p></div><% } else { %>
+<div class="media-grid">
+  <% items.forEach(function (m) { %>
+    <figure class="media-card">
+      <a href="/media/<%= m.id %>" target="_blank" rel="noopener"><img src="/media/<%= m.id %>" alt="<%= m.alt %>" loading="lazy" width="240" height="160"></a>
+      <figcaption>
+        <strong class="trunc" title="<%= m.filename %>"><%= m.filename %></strong>
+        <span class="muted">ID <%= m.id %> · <%= h.formatBytes(m.size) %></span>
+        <% if (can('media.upload')) { %>
+        <form method="post" action="/admin/media/<%= m.id %>/alt" class="mini-form"><input type="hidden" name="_csrf" value="<%= csrfToken %>"><input class="input input-sm" name="alt" value="<%= m.alt %>" maxlength="200" aria-label="Alternative text"><button class="icon-btn" aria-label="Save alt text" title="Save alt text"><%- icon('check', 16) %></button></form>
+        <form method="post" action="/admin/media/<%= m.id %>/replace" enctype="multipart/form-data" class="mini-form" data-loading><input type="hidden" name="_csrf" value="<%= csrfToken %>"><input class="input input-sm" type="file" name="file" accept="image/jpeg,image/png,image/webp,image/gif" required aria-label="Replacement image"><button class="icon-btn" aria-label="Replace image" title="Replace image"><%- icon('up', 16) %></button></form>
+        <% } %>
+        <% if (can('media.delete')) { %><form method="post" action="/admin/media/<%= m.id %>/delete" data-confirm="This image will disappear from any page that uses it."><input type="hidden" name="_csrf" value="<%= csrfToken %>"><button class="btn btn-ghost btn-sm icon-danger"><%- icon('trash', 14) %>Delete</button></form><% } %>
+      </figcaption>
+    </figure>
+  <% }) %>
+</div>
+<% } %>

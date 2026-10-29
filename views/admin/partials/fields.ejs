@@ -1,0 +1,23 @@
+<% fields.forEach(function (f) { var v = values[f.name]; var err = errors[f.name]; %>
+  <% if (f.type === 'checkbox') { %>
+    <label class="check"><input type="checkbox" name="<%= f.name %>" <%= (v === 'on' || v === true || v === 'true') ? 'checked' : '' %>><span><%= f.label %></span></label>
+  <% } else { %>
+    <label class="field <%= err ? 'has-err' : '' %>"><span><%= f.label %><% if (f.required) { %> <em class="req">required</em><% } %></span>
+      <% if (f.type === 'textarea') { %>
+        <textarea class="input" name="<%= f.name %>" rows="<%= f.rows || 4 %>" maxlength="<%= f.max || 5000 %>"><%= v == null ? '' : v %></textarea>
+      <% } else if (f.type === 'select') { %>
+        <select class="input" name="<%= f.name %>"><% f.options.forEach(function (o) { %><option value="<%= o.value %>" <%= String(v) === String(o.value) ? 'selected' : '' %>><%= o.label %></option><% }) %></select>
+      <% } else if (f.type === 'media') { %>
+        <select class="input" name="<%= f.name %>"><option value="">None</option><% mediaList.forEach(function (m) { %><option value="<%= m.id %>" <%= String(v) === String(m.id) ? 'selected' : '' %>><%= m.filename %> (<%= m.alt %>)</option><% }) %></select>
+      <% } else if (f.type === 'mediamulti') { var sel = [].concat(v || []).map(String); %>
+        <select class="input" name="<%= f.name %>" multiple size="5"><% mediaList.forEach(function (m) { %><option value="<%= m.id %>" <%= sel.indexOf(String(m.id)) > -1 ? 'selected' : '' %>><%= m.filename %> (<%= m.alt %>)</option><% }) %></select>
+      <% } else if (f.type === 'number') { %>
+        <input class="input" type="number" min="0" max="100000" name="<%= f.name %>" value="<%= v == null ? 0 : v %>">
+      <% } else { %>
+        <input class="input" type="<%= f.type === 'url' ? 'url' : 'text' %>" name="<%= f.name %>" value="<%= v == null ? '' : v %>" maxlength="<%= f.max || 500 %>" <%= f.required ? 'required' : '' %>>
+      <% } %>
+      <% if (f.help) { %><small class="muted"><%= f.help %></small><% } %>
+      <% if (err) { %><small class="err"><%= err %></small><% } %>
+    </label>
+  <% } %>
+<% }) %>

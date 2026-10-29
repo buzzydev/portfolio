@@ -1,0 +1,3 @@
+<button class="theme-toggle" type="button" data-theme-toggle <% if (currentUser) { %>data-save-url="/profile/theme" data-csrf="<%= csrfToken %>"<% } %> aria-label="Switch theme">
+  <span class="theme-track"><span class="theme-thumb"><%- icon('sun', 14, 'i-sun') %><%- icon('moon', 14, 'i-moon') %></span></span>
+</button>

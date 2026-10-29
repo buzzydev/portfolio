@@ -1,0 +1,17 @@
+<div class="page-head"><div><h1>Overview</h1><p class="muted">Live numbers from your database.</p></div></div>
+<div class="stat-grid">
+  <% [['Total projects', stats.projects, 'folder'], ['Published', stats.published, 'check'], ['Drafts', stats.drafts, 'edit'], ['Skills', stats.skills, 'code'], ['Administrators', stats.admins, 'users'], ['Contact messages', stats.messages, 'mail']].forEach(function (s, i) { %>
+    <div class="stat" data-i="<%= i %>"><%- icon(s[2], 18) %><p class="stat-num" data-count="<%= s[1] %>"><%= s[1] %></p><p class="muted"><%= s[0] %></p></div>
+  <% }) %>
+</div>
+<% if (stats.newMessages > 0 && can('messages.view')) { %><p class="alert alert-info"><a href="/admin/messages?status=NEW"><%= stats.newMessages %> unread message<%= stats.newMessages === 1 ? '' : 's' %></a> waiting in your inbox.</p><% } %>
+<% if (recent) { %>
+<div class="card">
+  <h2>Recent administrative activity</h2>
+  <% if (!recent.length) { %><p class="empty">Nothing recorded yet.</p><% } else { %>
+  <div class="table-wrap"><table class="table"><thead><tr><th>When</th><th>Who</th><th>Action</th></tr></thead><tbody>
+    <% recent.forEach(function (r) { %><tr><td data-label="When"><%= h.formatDate(r.createdAt, true) %></td><td data-label="Who"><%= r.user ? r.user.username : 'System' %></td><td data-label="Action"><code><%= r.action %></code></td></tr><% }) %>
+  </tbody></table></div>
+  <% } %>
+</div>
+<% } %>

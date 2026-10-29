@@ -1,0 +1,153 @@
+<% var avatar = settings.avatarMediaId ? '/media/' + settings.avatarMediaId : ''; var heroBg = settings.heroBackgroundMediaId ? '/media/' + settings.heroBackgroundMediaId : ''; %>
+<div class="progress" id="progress" aria-hidden="true"></div>
+<section class="hero" <% if (heroBg) { %>data-bg="<%= heroBg %>"<% } %>>
+  <div class="hero-grid" aria-hidden="true"></div>
+  <div class="container hero-inner">
+    <div class="hero-copy">
+      <p class="hero-kicker"><%= settings.displayName %></p>
+      <h1><%= settings.headline %></h1>
+      <p class="lead"><%= settings.intro %></p>
+      <div class="hero-cta">
+        <a class="btn btn-primary" href="#projects">Explore My Work</a>
+        <a class="btn btn-ghost" href="#contact">Contact Me</a>
+      </div>
+      <% var heroLinks = [['github', settings.githubUrl, 'GitHub'], ['send', settings.telegramUrl, 'Telegram']].filter(function (l) { return l[1]; }); %>
+      <% if (heroLinks.length) { %><ul class="hero-links"><% heroLinks.forEach(function (l) { %><li><a class="icon-link" href="<%= l[1] %>" target="_blank" rel="noopener noreferrer" aria-label="<%= l[2] %>"><%- icon(l[0], 18) %><span><%= l[2] %></span></a></li><% }) %></ul><% } %>
+    </div>
+    <div class="hero-art">
+      <div class="portrait">
+        <% if (avatar) { %><img src="<%= avatar %>" alt="Portrait of <%= settings.displayName %>" width="320" height="320" fetchpriority="high">
+        <% } else { %><span class="portrait-initials" aria-hidden="true"><%= h.initials({ displayName: settings.displayName }) %></span><% } %>
+      </div>
+      <div class="chip chip-a" aria-hidden="true">Node.js</div>
+      <div class="chip chip-b" aria-hidden="true">PostgreSQL</div>
+      <div class="chip chip-c" aria-hidden="true">Django</div>
+    </div>
+  </div>
+</section>
+
+
+<% var allSkills = []; Object.keys(skillGroups).forEach(function (g) { skillGroups[g].forEach(function (s) { allSkills.push(s.name); }); }); %>
+<% if (allSkills.length) { %>
+<div class="marquee" aria-label="Technologies">
+  <div class="marquee-track">
+    <% [0, 1].forEach(function (copy) { %><div class="marquee-item" <%- copy ? 'aria-hidden="true"' : '' %>><% allSkills.forEach(function (n, i) { %><span><%= n %></span><% if (i < allSkills.length - 1) { %><span class="dot" aria-hidden="true"></span><% } %><% }) %></div><% }) %>
+  </div>
+</div>
+<% } %>
+
+<section class="section" id="about">
+  <div class="container">
+    <h2 class="section-title">About me</h2>
+    <div class="about-grid">
+      <p class="prose"><%= settings.bio %></p>
+      <dl class="facts">
+        <% [['Technical interests', settings.interests], ['Strengths', settings.strengths], ['Development philosophy', settings.philosophy]].forEach(function (f) { if (f[1]) { %>
+          <div><dt><%= f[0] %></dt><dd><%= f[1] %></dd></div>
+        <% } }) %>
+      </dl>
+    </div>
+  </div>
+</section>
+
+<% if (Object.keys(skillGroups).length) { %>
+<section class="section section-alt" id="skills">
+  <div class="container">
+    <h2 class="section-title">Skills</h2>
+    <div class="skill-groups">
+      <% Object.keys(skillGroups).forEach(function (g) { %>
+        <div class="skill-group">
+          <h3><%= g %></h3>
+          <ul class="tags"><% skillGroups[g].forEach(function (s) { %><li class="tag" <% if (s.description) { %>title="<%= s.description %>"<% } %>><%= s.name %></li><% }) %></ul>
+        </div>
+      <% }) %>
+    </div>
+  </div>
+</section>
+<% } %>
+
+<section class="section" id="projects">
+  <div class="container">
+    <h2 class="section-title">Projects</h2>
+    <% if (!projects.length) { %>
+      <p class="empty">No projects are published yet.</p>
+    <% } else { %>
+      <div class="filters" role="group" aria-label="Filter projects">
+        <button class="filter is-active" data-filter="ALL" aria-pressed="true">All</button>
+        <% usedCategories.forEach(function (c) { %><button class="filter" data-filter="<%= c.value %>" aria-pressed="false"><%= c.label %></button><% }) %>
+      </div>
+      <div class="project-grid" id="project-grid">
+        <% projects.forEach(function (p) { %>
+          <article class="project" data-category="<%= p.category %>">
+            <div class="project-media">
+              <% if (p.cover) { %><img src="/media/<%= p.cover.id %>" alt="<%= p.cover.alt %>" loading="lazy" width="640" height="400">
+              <% } else { %><div class="project-ph" aria-hidden="true"><%- icon('code', 32) %></div><% } %>
+              <% if (p.featured) { %><span class="badge badge-accent"><%- icon('star', 12) %>Featured</span><% } %>
+            </div>
+            <div class="project-body">
+              <p class="project-cat"><%= h.labelOf(h.PROJECT_CATEGORIES, p.category) %></p>
+              <h3><%= p.title %></h3>
+              <p class="project-desc"><%= p.description %></p>
+              <% if (p.techStack.length) { %><ul class="tags tags-sm"><% p.techStack.forEach(function (t) { %><li class="tag"><%= t %></li><% }) %></ul><% } %>
+              <% if (p.galleryIds.length) { %><ul class="gallery"><% p.galleryIds.slice(0, 4).forEach(function (gid) { %><li><a href="/media/<%= gid %>" target="_blank" rel="noopener"><img src="/media/<%= gid %>" alt="<%= p.title %> screenshot" loading="lazy" width="64" height="48"></a></li><% }) %></ul><% } %>
+              <div class="project-links">
+                <% if (p.githubUrl) { %><a class="icon-link" href="<%= p.githubUrl %>" target="_blank" rel="noopener noreferrer"><%- icon('github', 16) %>Source</a><% } %>
+                <% if (p.liveUrl) { %><a class="icon-link" href="<%= p.liveUrl %>" target="_blank" rel="noopener noreferrer"><%- icon('external', 16) %>Live demo</a><% } %>
+              </div>
+            </div>
+          </article>
+        <% }) %>
+      </div>
+      <p class="empty" id="filter-empty" hidden>No projects in this category yet.</p>
+    <% } %>
+  </div>
+</section>
+
+<% if (experience.length) { %>
+<section class="section section-alt" id="experience">
+  <div class="container">
+    <h2 class="section-title">Experience and achievements</h2>
+    <% h.EXPERIENCE_TYPES.forEach(function (t) { var rows = experience.filter(function (e) { return e.type === t.value; }); if (rows.length) { %>
+      <div class="timeline-block">
+        <h3><%= t.label %></h3>
+        <ol class="timeline">
+          <% rows.forEach(function (e) { %>
+            <li>
+              <p class="tl-when"><%= e.startDate %><%= e.startDate && e.endDate ? ' to ' : '' %><%= e.endDate %></p>
+              <p class="tl-title"><%= e.title %><% if (e.organization) { %><span class="muted">, <%= e.organization %></span><% } %></p>
+              <% if (e.description) { %><p class="muted"><%= e.description %></p><% } %>
+            </li>
+          <% }) %>
+        </ol>
+      </div>
+    <% } }) %>
+  </div>
+</section>
+<% } %>
+
+<section class="section" id="contact">
+  <div class="container contact-grid">
+    <div>
+      <h2 class="section-title">Contact</h2>
+      <p class="prose">Send a message and it lands in the dashboard inbox.</p>
+      <% if (social.length) { %><ul class="social"><% social.forEach(function (s) { %><li><a class="icon-link" href="<%= s.url %>" target="_blank" rel="noopener noreferrer"><%- icon(s.icon, 18) %><span><%= s.label %></span></a></li><% }) %></ul><% } %>
+    </div>
+    <% if (settings.contactEnabled === 'true') { %>
+    <form class="card form-card stack" id="contact-form" method="post" action="/contact" novalidate>
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <input type="hidden" name="ft" value="<%= formToken %>">
+      <div class="hp" aria-hidden="true"><label>Website<input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
+      <div class="two">
+        <label class="field"><span>Name</span><input class="input" name="name" required maxlength="100" autocomplete="name"><small class="err" data-err="name"></small></label>
+        <label class="field"><span>Email</span><input class="input" type="email" name="email" required maxlength="254" autocomplete="email"><small class="err" data-err="email"></small></label>
+      </div>
+      <label class="field"><span>Subject (optional)</span><input class="input" name="subject" maxlength="150"></label>
+      <label class="field"><span>Message</span><textarea class="input" name="message" rows="5" required minlength="10" maxlength="4000"></textarea><small class="err" data-err="message"></small></label>
+      <button class="btn btn-primary" type="submit"><span class="spin" aria-hidden="true"></span>Send message</button>
+      <p class="form-status" id="contact-status" role="status"></p>
+    </form>
+    <% } else { %><p class="empty">The contact form is currently closed.</p><% } %>
+  </div>
+</section>
+
+<footer class="footer"><div class="container"><p class="muted"><%= settings.footerText || ('© ' + new Date().getFullYear() + ' ' + settings.displayName) %></p></div></footer>

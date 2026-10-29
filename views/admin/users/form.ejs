@@ -1,0 +1,15 @@
+<div class="page-head"><div><h1><%= target ? 'Edit ' + target.username : 'New administrator' %></h1></div></div>
+<form class="card stack form-wide" method="post" action="<%= target ? '/admin/users/' + target.id : '/admin/users' %>" data-loading>
+  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+  <% if (!target) { %>
+    <div class="two">
+      <label class="field"><span>Username</span><input class="input" name="username" value="<%= values.username || '' %>" required><% if (errors.username) { %><small class="err"><%= errors.username %></small><% } %></label>
+      <label class="field"><span>Email</span><input class="input" type="email" name="email" value="<%= values.email || '' %>" required><% if (errors.email) { %><small class="err"><%= errors.email %></small><% } %></label>
+    </div>
+  <% } %>
+  <label class="field"><span>Display name</span><input class="input" name="displayName" value="<%= values.displayName || '' %>" maxlength="80"></label>
+  <label class="field"><span>Role</span><select class="input" name="role"><% roles.forEach(function (r) { %><option value="<%= r %>" <%= values.role === r ? 'selected' : '' %>><%= ROLE_LABEL[r] %></option><% }) %></select><% if (errors.role) { %><small class="err"><%= errors.role %></small><% } %></label>
+  <% if (target) { %><label class="field"><span>Status</span><select class="input" name="status"><option value="ACTIVE" <%= values.status === 'ACTIVE' ? 'selected' : '' %>>Active</option><option value="SUSPENDED" <%= values.status === 'SUSPENDED' ? 'selected' : '' %>>Suspended (signed out, cannot sign in)</option></select></label><% } %>
+  <label class="field"><span><%= target ? 'Reset password (optional)' : 'Password' %></span><input class="input" type="password" name="password" autocomplete="new-password" minlength="12" <%= target ? '' : 'required' %>><small class="muted">At least 12 characters. <%= target ? 'Leave blank to keep the current password.' : '' %></small><% if (errors.password) { %><small class="err"><%= errors.password %></small><% } %></label>
+  <div class="form-actions"><a class="btn btn-ghost" href="/admin/users">Cancel</a><button class="btn btn-primary" type="submit"><span class="spin" aria-hidden="true"></span>Save</button></div>
+</form>

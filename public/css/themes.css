@@ -1,0 +1,58 @@
+/* Design tokens. Every colour in the app comes from these variables. */
+:root, :root[data-theme="light"] {
+  color-scheme: light;
+  --bg: #f1f3f8;
+  --bg-alt: #e8ecf5;
+  --surface: #ffffff;
+  --surface-2: #f6f7fb;
+  --text: #0f172a;
+  --muted: #536079;
+  --border: #d8deea;
+  --accent: #4a3fe0;
+  --accent-hover: #3b31c2;
+  --accent-soft: #e9e7ff;
+  --accent-2: #0b7fa8;
+  --on-accent: #ffffff;
+  --ok: #0c7a4f;
+  --ok-soft: #dcf5ea;
+  --warn: #9a5b00;
+  --warn-soft: #fff0d4;
+  --danger: #b4233a;
+  --danger-soft: #fde4e8;
+  --shadow: 0 1px 2px rgba(15, 23, 42, .06), 0 8px 24px rgba(15, 23, 42, .06);
+  --shadow-lg: 0 20px 50px rgba(15, 23, 42, .18);
+  --glow: 0 0 0 rgba(0,0,0,0);
+  --hero-a: rgba(74, 63, 224, .16);
+  --hero-b: rgba(11, 127, 168, .14);
+  --grid-line: rgba(15, 23, 42, .06);
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #0a0e1c;
+  --bg-alt: #0e1427;
+  --surface: #111833;
+  --surface-2: #161f40;
+  --text: #e8ecf8;
+  --muted: #9aa6c7;
+  --border: #243059;
+  --accent: #8b93ff;
+  --accent-hover: #a5abff;
+  --accent-soft: #232a5c;
+  --accent-2: #38c6f4;
+  --on-accent: #0a0e1c;
+  --ok: #4fd89b;
+  --ok-soft: #123a2b;
+  --warn: #f0b95a;
+  --warn-soft: #3a2c10;
+  --danger: #ff7b8f;
+  --danger-soft: #401a24;
+  --shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 8px 24px rgba(0, 0, 0, .35);
+  --shadow-lg: 0 20px 50px rgba(0, 0, 0, .6);
+  --glow: 0 0 24px rgba(139, 147, 255, .18);
+  --hero-a: rgba(139, 147, 255, .20);
+  --hero-b: rgba(56, 198, 244, .14);
+  --grid-line: rgba(139, 147, 255, .08);
+}
+.theme-anim, .theme-anim *, .theme-anim *::before, .theme-anim *::after {
+  transition: background-color .3s ease, color .3s ease, border-color .3s ease, box-shadow .3s ease !important;
+}

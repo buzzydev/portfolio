@@ -1,0 +1,16 @@
+<div class="page-head"><div><h1>Administrators</h1><p class="muted">Level 1 outranks 2, 2 outranks 3, 3 outranks 4.</p></div>
+  <% if (canCreate) { %><a class="btn btn-primary" href="/admin/users/new"><%- icon('plus', 16) %>New administrator</a><% } %></div>
+<form class="toolbar" method="get"><label class="search"><%- icon('search', 16) %><input class="input" type="search" name="q" value="<%= q %>" placeholder="Search" aria-label="Search"></label><button class="btn btn-ghost">Search</button></form>
+<div class="card flush"><div class="table-wrap"><table class="table"><thead><tr><th>Administrator</th><th>Role</th><th>Status</th><th>Last sign-in</th><th class="actions-col"><span class="sr-only">Actions</span></th></tr></thead><tbody>
+<% rows.forEach(function (u) { %><tr>
+  <td data-label="Administrator"><strong><%= u.displayName || u.username %></strong><br><span class="muted">@<%= u.username %> · <%= u.email %></span></td>
+  <td data-label="Role"><%= ROLE_LABEL[u.role] %></td>
+  <td data-label="Status"><span class="badge <%= u.status === 'ACTIVE' ? 'badge-ok' : 'badge-warn' %>"><%= u.status === 'ACTIVE' ? 'Active' : 'Suspended' %></span></td>
+  <td data-label="Last sign-in"><%= u.lastLoginAt ? h.formatDate(u.lastLoginAt, true) : 'Never' %></td>
+  <td class="actions-col"><div class="row-actions">
+    <% if (u.manageable) { %>
+      <a class="icon-btn" href="/admin/users/<%= u.id %>/edit" aria-label="Edit <%= u.username %>" title="Edit"><%- icon('edit', 16) %></a>
+      <form method="post" action="/admin/users/<%= u.id %>/delete" data-confirm="Delete <%= u.username %>? Their vault entries are deleted too."><input type="hidden" name="_csrf" value="<%= csrfToken %>"><button class="icon-btn icon-danger" aria-label="Delete" title="Delete"><%- icon('trash', 16) %></button></form>
+    <% } else { %><span class="muted" title="Not editable by your role"><%- icon('lock', 14) %></span><% } %>
+  </div></td></tr><% }) %>
+</tbody></table></div></div>

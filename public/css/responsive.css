@@ -1,0 +1,23 @@
+@media (max-width: 860px) {
+  .hero-inner, .about-grid, .contact-grid { grid-template-columns: 1fr; gap: 2rem; }
+  .hero-art { order: -1; }
+  .chip { display: none; }
+  .two { grid-template-columns: 1fr; }
+}
+@media (max-width: 720px) {
+  .nav-toggle { display: inline-grid; margin-left: auto; }
+  .nav-menu { position: absolute; left: 0; right: 0; top: 64px; flex-direction: column; align-items: stretch; gap: .25rem; padding: .75rem 1.25rem 1rem; background: var(--bg); border-bottom: 1px solid var(--border); box-shadow: var(--shadow); display: none; }
+  .nav-menu.is-open { display: flex; animation: pop .18s ease; }
+  .nav-link, .user-btn { padding: .75rem .8rem; min-height: 44px; }
+  .user-btn { border-radius: 10px; width: 100%; }
+  .nav-menu .dropdown-menu { position: static; box-shadow: none; margin-top: .35rem; }
+  .theme-toggle { align-self: flex-start; padding: .6rem .8rem; }
+  .project-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 480px) {
+  .btn { min-height: 44px; }
+  .hero-cta .btn { flex: 1; }
+  .card { padding: 1.1rem; }
+  .toasts { left: 1rem; right: 1rem; }
+}
+html, body { overflow-x: clip; }

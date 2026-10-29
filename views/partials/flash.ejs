@@ -1,0 +1,13 @@
+<div class="toasts" id="toasts" role="status" aria-live="polite">
+  <% flash.forEach(function (f) { %><div class="toast toast-<%= f.type %>" data-toast><%- icon(f.type === 'error' ? 'x' : 'check', 16) %><span><%= f.text %></span></div><% }) %>
+</div>
+<dialog class="dialog" id="confirm-dialog" aria-labelledby="confirm-title">
+  <form method="dialog">
+    <h2 id="confirm-title">Are you sure?</h2>
+    <p id="confirm-text"></p>
+    <div class="dialog-actions">
+      <button class="btn btn-ghost" value="cancel">Cancel</button>
+      <button class="btn btn-danger" value="ok" id="confirm-ok">Delete</button>
+    </div>
+  </form>
+</dialog>

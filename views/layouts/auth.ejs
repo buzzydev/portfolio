@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="">
+<head><title><%= title %></title><%- include('../partials/head') %></head>
+<body class="site auth-body">
+  <div class="auth-theme"><%- include('../partials/theme-toggle') %></div>
+  <main id="main" class="auth-wrap"><%- body %></main>
+  <%- include('../partials/flash') %>
+  <script src="/js/theme.js" defer></script>
+  <script src="/js/main.js" defer></script>
+</body>
+</html>

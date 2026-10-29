@@ -1,0 +1,43 @@
+<section class="container narrow page">
+  <h1>Your profile</h1>
+  <p class="muted"><%= ROLE_LABEL[currentUser.role] %></p>
+
+  <div class="card stack">
+    <h2>Profile picture</h2>
+    <form class="row" method="post" action="/profile/avatar" enctype="multipart/form-data" data-loading>
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <%- include('../partials/avatar', { user: currentUser, size: 56 }) %>
+      <input class="input" type="file" name="file" accept="image/jpeg,image/png,image/webp,image/gif" required aria-label="Choose image">
+      <button class="btn btn-ghost" type="submit"><span class="spin" aria-hidden="true"></span>Upload</button>
+    </form>
+  </div>
+
+  <form class="card stack" method="post" action="/profile" data-loading>
+    <h2>Account details</h2>
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+    <div class="two">
+      <label class="field"><span>Username</span><input class="input" name="username" value="<%= values.username %>" required><% if (errors.username) { %><small class="err"><%= errors.username %></small><% } %></label>
+      <label class="field"><span>Email</span><input class="input" type="email" name="email" value="<%= values.email %>" required><% if (errors.email) { %><small class="err"><%= errors.email %></small><% } %></label>
+    </div>
+    <label class="field"><span>Display name</span><input class="input" name="displayName" value="<%= values.displayName %>" maxlength="80"></label>
+    <label class="field"><span>Biography</span><textarea class="input" name="bio" rows="3" maxlength="1000"><%= values.bio %></textarea></label>
+    <div class="two">
+      <label class="field"><span>GitHub profile URL</span><input class="input" name="githubUrl" value="<%= values.githubUrl %>" placeholder="https://github.com/…"><% if (errors.githubUrl) { %><small class="err"><%= errors.githubUrl %></small><% } %></label>
+      <label class="field"><span>Telegram URL</span><input class="input" name="telegramUrl" value="<%= values.telegramUrl %>" placeholder="https://t.me/…"><% if (errors.telegramUrl) { %><small class="err"><%= errors.telegramUrl %></small><% } %></label>
+    </div>
+    <label class="field"><span>Preferred theme</span>
+      <select class="input" name="preferredTheme"><% [['SYSTEM','Follow my device'],['LIGHT','Light'],['DARK','Dark']].forEach(function (t) { %><option value="<%= t[0] %>" <%= values.preferredTheme === t[0] ? 'selected' : '' %>><%= t[1] %></option><% }) %></select>
+    </label>
+    <label class="field"><span>Current password <em class="muted">(only needed to change username or email)</em></span><input class="input" type="password" name="currentPassword" autocomplete="current-password"><% if (errors.currentPassword) { %><small class="err"><%= errors.currentPassword %></small><% } %></label>
+    <div><button class="btn btn-primary" type="submit"><span class="spin" aria-hidden="true"></span>Save profile</button></div>
+  </form>
+
+  <form class="card stack" method="post" action="/profile/password" data-loading>
+    <h2>Change password</h2>
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+    <label class="field"><span>Current password</span><input class="input" type="password" name="currentPassword" autocomplete="current-password" required><% if (pwErrors.currentPassword) { %><small class="err"><%= pwErrors.currentPassword %></small><% } %></label>
+    <label class="field"><span>New password</span><input class="input" type="password" name="newPassword" autocomplete="new-password" minlength="12" required><small class="muted">At least 12 characters.</small><% if (pwErrors.newPassword) { %><small class="err"><%= pwErrors.newPassword %></small><% } %></label>
+    <label class="field"><span>Confirm new password</span><input class="input" type="password" name="confirmPassword" autocomplete="new-password" required><% if (pwErrors.confirmPassword) { %><small class="err"><%= pwErrors.confirmPassword %></small><% } %></label>
+    <div><button class="btn btn-primary" type="submit"><span class="spin" aria-hidden="true"></span>Update password</button></div>
+  </form>
+</section>

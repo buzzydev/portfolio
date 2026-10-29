@@ -1,0 +1,16 @@
+<div class="page-head"><div><h1>Contact Messages</h1><p class="muted"><%= total %> total</p></div></div>
+<form class="toolbar" method="get" action="/admin/messages">
+  <label class="search"><%- icon('search', 16) %><input class="input" type="search" name="q" value="<%= q %>" placeholder="Search messages" aria-label="Search"></label>
+  <select class="input" name="status" aria-label="Status" data-autosubmit><option value="">All</option><% ['NEW','READ','ARCHIVED'].forEach(function (s) { %><option value="<%= s %>" <%= status === s ? 'selected' : '' %>><%= s.charAt(0) + s.slice(1).toLowerCase() %></option><% }) %></select>
+  <button class="btn btn-ghost">Search</button>
+</form>
+<% if (!items.length) { %><div class="card empty-state"><%- icon('mail', 28) %><p>No messages match.</p></div><% } else { %>
+<div class="card flush"><div class="table-wrap"><table class="table"><thead><tr><th>From</th><th>Subject</th><th>Status</th><th>Received</th></tr></thead><tbody>
+  <% items.forEach(function (m) { %><tr>
+    <td data-label="From"><a href="/admin/messages/<%= m.id %>"><strong><%= m.name %></strong></a><br><span class="muted"><%= m.email %></span></td>
+    <td data-label="Subject"><%= m.subject || m.message.slice(0, 60) %></td>
+    <td data-label="Status"><span class="badge <%= m.status === 'NEW' ? 'badge-accent' : '' %>"><%= m.status.charAt(0) + m.status.slice(1).toLowerCase() %></span></td>
+    <td data-label="Received"><%= h.formatDate(m.createdAt, true) %></td></tr><% }) %>
+</tbody></table></div></div>
+<%- include('../partials/pager', { query: { q: q, status: status } }) %>
+<% } %>

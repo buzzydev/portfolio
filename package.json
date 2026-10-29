@@ -1,0 +1,41 @@
+{
+  "name": "portfolio",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Developer portfolio with admin dashboard, role hierarchy and encrypted password vault",
+  "main": "src/server.js",
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "dev": "nodemon --watch src --watch views src/server.js",
+    "start": "node src/server.js",
+    "postinstall": "prisma generate",
+    "migrate:dev": "prisma migrate dev",
+    "migrate:deploy": "prisma migrate deploy",
+    "create-admin": "node scripts/create-admin.js",
+    "seed": "node prisma/seed.js",
+    "test": "jest --runInBand"
+  },
+  "prisma": { "seed": "node prisma/seed.js" },
+  "dependencies": {
+    "@prisma/client": "5.22.0",
+    "bcryptjs": "^2.4.3",
+    "connect-pg-simple": "^10.0.0",
+    "dotenv": "^16.4.5",
+    "ejs": "^3.1.10",
+    "express": "^4.21.2",
+    "express-ejs-layouts": "^2.5.1",
+    "express-rate-limit": "^7.5.0",
+    "express-session": "^1.18.1",
+    "helmet": "^8.0.0",
+    "multer": "^2.0.2",
+    "pg": "^8.13.1",
+    "prisma": "5.22.0",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "nodemon": "^3.1.9",
+    "supertest": "^7.0.0"
+  },
+  "jest": { "testEnvironment": "node", "testMatch": ["**/tests/**/*.test.js"] }
+}

@@ -1,0 +1,26 @@
+<header class="nav" id="top">
+  <div class="nav-inner">
+    <a class="brand" href="/" aria-label="Home"><span class="brand-mark"><%- icon('code', 18) %></span><span class="brand-name"><%= typeof siteTitle !== 'undefined' ? siteTitle : 'Portfolio' %></span></a>
+    <button class="icon-btn nav-toggle" id="nav-toggle" aria-label="Open menu" aria-expanded="false" aria-controls="nav-menu"><%- icon('menu', 20) %></button>
+    <nav class="nav-menu" id="nav-menu" aria-label="Main">
+      <a class="nav-link <%= path === '/' ? 'is-active' : '' %>" href="/">Home</a>
+      <% if (currentUser) { %>
+        <div class="dropdown" data-dropdown>
+          <button class="user-btn" aria-haspopup="menu" aria-expanded="false" data-dropdown-toggle>
+            <%- include('avatar', { user: currentUser, size: 28 }) %>
+            <span class="user-name"><%= currentUser.displayName || currentUser.username %></span>
+            <%- icon('chevron', 16, 'chev') %>
+          </button>
+          <div class="dropdown-menu" role="menu" hidden>
+            <a role="menuitem" href="/profile"><%- icon('user', 16) %>Profile</a>
+            <% if (can('dashboard.view')) { %><a role="menuitem" href="/admin"><%- icon('layout', 16) %>Dashboard</a><% } %>
+            <form method="post" action="/logout"><input type="hidden" name="_csrf" value="<%= csrfToken %>"><button role="menuitem" type="submit"><%- icon('logout', 16) %>Sign out</button></form>
+          </div>
+        </div>
+      <% } else { %>
+        <a class="nav-link" href="/login">Sign in</a>
+      <% } %>
+      <%- include('theme-toggle') %>
+    </nav>
+  </div>
+</header>

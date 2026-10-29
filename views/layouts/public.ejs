@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="<%= currentUser && currentUser.preferredTheme !== 'SYSTEM' ? currentUser.preferredTheme.toLowerCase() : '' %>">
+<head>
+  <title><%= title %></title>
+  <% if (typeof description !== 'undefined') { %><meta name="description" content="<%= description %>"><% } %>
+  <%- include('../partials/head') %>
+</head>
+<body class="site">
+  <a class="skip" href="#main">Skip to content</a>
+  <%- include('../partials/navbar') %>
+  <main id="main"><%- body %></main>
+  <%- include('../partials/flash') %>
+  <script src="/js/theme.js" defer></script>
+  <script src="/js/main.js" defer></script>
+</body>
+</html>

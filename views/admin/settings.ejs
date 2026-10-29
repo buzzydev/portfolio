@@ -1,0 +1,7 @@
+<div class="page-head"><div><h1><%= title %></h1><% if (intro) { %><p class="muted"><%= intro %></p><% } %></div></div>
+<form class="card stack form-wide" method="post" action="<%= action %>" data-loading>
+  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+  <% if (Object.keys(errors).length) { %><div class="alert alert-error" role="alert">Fix the highlighted fields and save again.</div><% } %>
+  <%- include('partials/fields') %>
+  <div class="form-actions"><button class="btn btn-primary" type="submit"><span class="spin" aria-hidden="true"></span>Save changes</button></div>
+</form>

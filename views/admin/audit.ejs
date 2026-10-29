@@ -1,0 +1,8 @@
+<div class="page-head"><div><h1>Audit Logs</h1><p class="muted">Administrative actions. Secrets are never recorded.</p></div></div>
+<form class="toolbar" method="get"><label class="search"><%- icon('search', 16) %><input class="input" type="search" name="q" value="<%= q %>" placeholder="Filter by action or entity" aria-label="Filter"></label><button class="btn btn-ghost">Filter</button></form>
+<% if (!items.length) { %><div class="card empty-state"><%- icon('list', 28) %><p>No entries.</p></div><% } else { %>
+<div class="card flush"><div class="table-wrap"><table class="table"><thead><tr><th>When</th><th>Who</th><th>Action</th><th>Target</th><th>Details</th></tr></thead><tbody>
+<% items.forEach(function (r) { %><tr><td data-label="When"><%= h.formatDate(r.createdAt, true) %></td><td data-label="Who"><%= r.user ? r.user.username : 'System' %></td><td data-label="Action"><code><%= r.action %></code></td><td data-label="Target"><%= r.entity %><%= r.entityId ? ' #' + r.entityId : '' %></td><td data-label="Details"><span class="muted trunc"><%= r.meta ? JSON.stringify(r.meta) : '' %></span></td></tr><% }) %>
+</tbody></table></div></div>
+<%- include('partials/pager', { query: { q: q } }) %>
+<% } %>

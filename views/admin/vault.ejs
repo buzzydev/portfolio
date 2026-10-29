@@ -1,0 +1,73 @@
+<div class="page-head">
+  <div><h1>Password Vault</h1><p class="muted">Secrets are encrypted with AES-256-GCM before they reach the database. Keep <code>VAULT_ENCRYPTION_KEY</code> backed up: without it, saved passwords cannot be recovered.</p></div>
+</div>
+
+<div class="vault-state card" id="vault-state" data-unlocked="<%= isUnlocked ? '1' : '0' %>" data-until="<%= unlockedUntil %>" data-csrf="<%= csrfToken %>">
+  <span class="vault-lock"><%- icon('lock', 18) %></span>
+  <div class="grow"><strong id="vault-state-text"><%= isUnlocked ? 'Vault unlocked' : 'Vault locked' %></strong>
+    <p class="muted" id="vault-state-sub"><%= isUnlocked ? 'Locks again 10 minutes after you confirmed your password.' : 'Confirm your account password to reveal, copy, add, edit or delete passwords.' %></p></div>
+  <button class="btn btn-ghost" type="button" id="vault-toggle"><%= isUnlocked ? 'Lock now' : 'Unlock' %></button>
+</div>
+
+<form class="toolbar" method="get" action="/admin/vault">
+  <label class="search"><%- icon('search', 16) %><input class="input" type="search" name="q" value="<%= q %>" placeholder="Search service, user or URL" aria-label="Search"></label>
+  <select class="input" name="category" aria-label="Category" data-autosubmit><option value="">All categories</option><% categories.forEach(function (c) { %><option value="<%= c %>" <%= category === c ? 'selected' : '' %>><%= c %></option><% }) %></select>
+  <select class="input" name="sort" aria-label="Sort" data-autosubmit><option value="service" <%= sort === 'service' ? 'selected' : '' %>>Name A to Z</option><option value="updated" <%= sort === 'updated' ? 'selected' : '' %>>Recently updated</option><option value="created" <%= sort === 'created' ? 'selected' : '' %>>Recently added</option></select>
+  <button class="btn btn-ghost" type="submit">Apply</button>
+</form>
+
+<div class="vault-top"><button class="btn btn-primary" type="button" id="vault-add"><%- icon('plus', 16) %>Add Password</button></div>
+
+<% if (!items.length) { %>
+  <div class="card empty-state"><%- icon('key', 28) %><p><%= q || category ? 'No entries match.' : 'Your vault is empty.' %></p></div>
+<% } else { %>
+<ul class="vault-list">
+  <% items.forEach(function (e) { %>
+  <li class="vault-row" data-id="<%= e.id %>" data-service="<%= e.service %>" data-username="<%= e.username %>" data-url="<%= e.url %>" data-category="<%= e.category %>">
+    <div class="vault-main">
+      <strong class="trunc"><%= e.service %></strong>
+      <% if (e.url) { %><a class="muted trunc" href="<%= e.url %>" target="_blank" rel="noopener noreferrer"><%= e.url %></a><% } %>
+    </div>
+    <div class="vault-user trunc" title="<%= e.username %>"><%= e.username || '—' %></div>
+    <div class="vault-pass"><code class="secret" data-secret aria-label="Password hidden">••••••••••••</code></div>
+    <div class="vault-meta"><span class="badge"><%= e.category %></span><span class="muted">Updated <%= h.formatDate(e.updatedAt) %></span></div>
+    <div class="row-actions">
+      <button class="icon-btn" type="button" data-act="reveal" aria-label="Reveal password" title="Reveal password"><%- icon('eye', 16) %></button>
+      <button class="icon-btn" type="button" data-act="copy-user" aria-label="Copy username" title="Copy username" <%= e.username ? '' : 'disabled' %>><%- icon('user', 16) %></button>
+      <button class="icon-btn" type="button" data-act="copy-pass" aria-label="Copy password" title="Copy password"><%- icon('copy', 16) %></button>
+      <button class="icon-btn" type="button" data-act="edit" aria-label="Edit" title="Edit"><%- icon('edit', 16) %></button>
+      <form method="post" action="/admin/vault/<%= e.id %>/delete" data-confirm="Delete the saved password for <%= e.service %>? This cannot be undone." data-needs-unlock><input type="hidden" name="_csrf" value="<%= csrfToken %>"><button class="icon-btn icon-danger" aria-label="Delete" title="Delete"><%- icon('trash', 16) %></button></form>
+    </div>
+  </li>
+  <% }) %>
+</ul>
+<%- include('partials/pager', { query: { q: q, category: category, sort: sort } }) %>
+<% } %>
+
+<dialog class="dialog dialog-lg" id="entry-dialog" aria-labelledby="entry-title">
+  <form method="post" action="/admin/vault" id="entry-form" class="stack" autocomplete="off">
+    <h2 id="entry-title">Add password</h2>
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+    <label class="field"><span>Service or website</span><input class="input" name="service" required maxlength="120"></label>
+    <div class="two">
+      <label class="field"><span>Username or email</span><input class="input" name="username" maxlength="200" autocomplete="off"></label>
+      <label class="field"><span>Category</span><input class="input" name="category" maxlength="40" value="General" list="vault-cats"><datalist id="vault-cats"><% categories.forEach(function (c) { %><option value="<%= c %>"><% }) %></datalist></label>
+    </div>
+    <label class="field"><span>Website URL</span><input class="input" type="url" name="url" maxlength="500" placeholder="https://"></label>
+    <label class="field"><span id="entry-pass-label">Password</span>
+      <span class="input-group"><input class="input mono" type="password" name="password" maxlength="1000" autocomplete="new-password" id="entry-password"><button class="icon-btn" type="button" id="entry-pass-toggle" aria-label="Show password"><%- icon('eye', 16) %></button><button class="btn btn-ghost btn-sm" type="button" id="entry-generate">Generate</button></span>
+      <small class="muted" id="entry-pass-help"></small></label>
+    <label class="field"><span>Notes (encrypted)</span><textarea class="input" name="notes" rows="3" maxlength="2000"></textarea></label>
+    <div class="dialog-actions"><button class="btn btn-ghost" type="button" data-close>Cancel</button><button class="btn btn-primary" type="submit"><span class="spin" aria-hidden="true"></span>Save</button></div>
+  </form>
+</dialog>
+
+<dialog class="dialog" id="unlock-dialog" aria-labelledby="unlock-title">
+  <form id="unlock-form" class="stack">
+    <h2 id="unlock-title">Confirm your password</h2>
+    <p class="muted">This keeps the vault safe if you leave your screen unattended.</p>
+    <label class="field"><span>Account password</span><input class="input" type="password" name="password" autocomplete="current-password" required></label>
+    <p class="err" id="unlock-error" role="alert"></p>
+    <div class="dialog-actions"><button class="btn btn-ghost" type="button" data-close>Cancel</button><button class="btn btn-primary" type="submit"><span class="spin" aria-hidden="true"></span>Unlock</button></div>
+  </form>
+</dialog>

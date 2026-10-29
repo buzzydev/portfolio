@@ -1,0 +1,9 @@
+<div class="page-head"><div><h1><%= m.subject || 'Message' %></h1><p class="muted">From <%= m.name %> · <a href="mailto:<%= m.email %>"><%= m.email %></a> · <%= h.formatDate(m.createdAt, true) %></p></div></div>
+<div class="card stack"><p class="message-body"><%= m.message %></p></div>
+<div class="row-actions wrap">
+  <% if (can('messages.process')) { ['NEW','READ','ARCHIVED'].filter(function (s) { return s !== m.status; }).forEach(function (s) { %>
+    <form method="post" action="/admin/messages/<%= m.id %>/status"><input type="hidden" name="_csrf" value="<%= csrfToken %>"><input type="hidden" name="status" value="<%= s %>"><button class="btn btn-ghost">Mark as <%= s.toLowerCase() %></button></form>
+  <% }) } %>
+  <% if (can('messages.delete')) { %><form method="post" action="/admin/messages/<%= m.id %>/delete" data-confirm="This message will be permanently deleted."><input type="hidden" name="_csrf" value="<%= csrfToken %>"><button class="btn btn-danger-ghost"><%- icon('trash', 16) %>Delete</button></form><% } %>
+  <a class="btn btn-ghost" href="/admin/messages">Back to inbox</a>
+</div>

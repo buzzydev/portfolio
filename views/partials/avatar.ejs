@@ -1,0 +1,5 @@
+<% if (user.avatarId) { %>
+  <img class="avatar" src="/media/<%= user.avatarId %>" alt="" width="<%= size %>" height="<%= size %>">
+<% } else { %>
+  <span class="avatar avatar-initials" aria-hidden="true"><%= h.initials(user) %></span>
+<% } %>

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="<%= currentUser && currentUser.preferredTheme !== 'SYSTEM' ? currentUser.preferredTheme.toLowerCase() : '' %>">
+<head>
+  <title><%= title %> · Dashboard</title>
+  <% var vaultPage = (section === 'vault'); %>
+  <%- include('../partials/head', { dash: true, vaultPage: vaultPage }) %>
+</head>
+<body class="admin">
+  <a class="skip" href="#main">Skip to content</a>
+  <div class="shell">
+    <aside class="sidebar" id="sidebar" aria-label="Dashboard navigation">
+      <div class="sidebar-head"><a class="brand" href="/"><span class="brand-mark"><%- icon('code', 18) %></span><span class="brand-name">Dashboard</span></a></div>
+      <%
+        var nav = [
+          ['overview', '/admin', 'layout', 'Overview', 'dashboard.view'],
+          ['projects', '/admin/projects', 'folder', 'Portfolio Projects', 'projects.view'],
+          ['skills', '/admin/skills', 'code', 'Skills', 'skills.view'],
+          ['experience', '/admin/experience', 'briefcase', 'Experience', 'experience.view'],
+          ['profile-settings', '/admin/profile-settings', 'user', 'Profile Settings', 'profile.manage'],
+          ['social', '/admin/social', 'link', 'Social Links', 'social.view'],
+          ['media', '/admin/media', 'image', 'Images and Media', 'media.view'],
+          ['vault', '/admin/vault', 'key', 'Password Vault', 'vault.use'],
+          ['users', '/admin/users', 'users', 'Administrators', 'users.view'],
+          ['messages', '/admin/messages', 'mail', 'Contact Messages', 'messages.view'],
+          ['audit', '/admin/audit', 'list', 'Audit Logs', 'audit.view'],
+          ['settings', '/admin/settings', 'sliders', 'General Settings', 'settings.manage']
+        ];
+      %>
+      <nav class="side-nav">
+        <% nav.forEach(function (n) { if (can(n[4])) { %>
+          <a href="<%= n[1] %>" class="side-link <%= section === n[0] ? 'is-active' : '' %>" title="<%= n[3] %>" <%= section === n[0] ? 'aria-current=page' : '' %>><%- icon(n[2], 18) %><span><%= n[3] %></span></a>
+        <% } }) %>
+      </nav>
+      <div class="sidebar-foot"><span class="role-chip"><%= ROLE_LABEL[currentUser.role] %></span></div>
+    </aside>
+    <div class="scrim" id="scrim" hidden></div>
+    <div class="main">
+      <header class="topbar">
+        <button class="icon-btn" id="sidebar-toggle" aria-label="Toggle sidebar" aria-expanded="true"><%- icon('panel', 20) %></button>
+        <nav class="crumbs" aria-label="Breadcrumb">
+          <ol><% crumbs.forEach(function (c, i) { %><li><% if (c.href && i < crumbs.length - 1) { %><a href="<%= c.href %>"><%= c.label %></a><% } else { %><span aria-current="page"><%= c.label %></span><% } %></li><% }) %></ol>
+        </nav>
+        <div class="topbar-right">
+          <%- include('../partials/theme-toggle') %>
+          <div class="dropdown" data-dropdown>
+            <button class="user-btn" aria-haspopup="menu" aria-expanded="false" data-dropdown-toggle>
+              <%- include('../partials/avatar', { user: currentUser, size: 28 }) %>
+              <span class="user-name"><%= currentUser.displayName || currentUser.username %></span><%- icon('chevron', 16, 'chev') %>
+            </button>
+            <div class="dropdown-menu" role="menu" hidden>
+              <a role="menuitem" href="/profile"><%- icon('user', 16) %>Profile</a>
+              <a role="menuitem" href="/"><%- icon('home', 16) %>View site</a>
+              <form method="post" action="/logout"><input type="hidden" name="_csrf" value="<%= csrfToken %>"><button role="menuitem" type="submit"><%- icon('logout', 16) %>Sign out</button></form>
+            </div>
+          </div>
+        </div>
+      </header>
+      <main id="main" class="content"><%- body %></main>
+    </div>
+  </div>
+  <%- include('../partials/flash') %>
+  <script src="/js/theme.js" defer></script>
+  <script src="/js/main.js" defer></script>
+  <script src="/js/dashboard.js" defer></script>
+  <% if (section === 'vault') { %><script src="/js/vault.js" defer></script><% } %>
+</body>
+</html>

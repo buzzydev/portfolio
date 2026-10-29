@@ -1,0 +1,46 @@
+<div class="page-head">
+  <div><h1><%= cfg.title %></h1><p class="muted"><%= total %> total</p></div>
+  <% if (can(cfg.perms.create)) { %><a class="btn btn-primary" href="<%= base %>/new"><%- icon('plus', 16) %>New <%= cfg.singular %></a><% } %>
+</div>
+<form class="toolbar" method="get" action="<%= base %>">
+  <label class="search"><%- icon('search', 16) %><input class="input" type="search" name="q" value="<%= q %>" placeholder="Search" aria-label="Search"></label>
+  <% if (cfg.filter) { %><select class="input" name="<%= cfg.filter.name %>" aria-label="Filter" data-autosubmit><option value=""><%= cfg.filter.label %></option><% cfg.filter.options.forEach(function (o) { %><option value="<%= o.value %>" <%= filterValue === o.value ? 'selected' : '' %>><%= o.label %></option><% }) %></select><% } %>
+  <button class="btn btn-ghost" type="submit">Search</button>
+</form>
+<% if (!items.length) { %>
+  <div class="card empty-state"><%- icon('folder', 28) %><p><%= q || filterValue ? 'Nothing matches that search.' : 'No ' + cfg.title.toLowerCase() + ' yet.' %></p>
+  <% if (can(cfg.perms.create) && !q) { %><a class="btn btn-primary" href="<%= base %>/new">Add the first <%= cfg.singular %></a><% } %></div>
+<% } else { %>
+<div class="card flush"><div class="table-wrap"><table class="table">
+  <thead><tr><% columns.forEach(function (c) { %><th><%= c.label %></th><% }) %><th class="actions-col"><span class="sr-only">Actions</span></th></tr></thead>
+  <tbody>
+  <% items.forEach(function (it, idx) { %>
+    <tr>
+      <% columns.forEach(function (c) { var v = it[c.key]; %>
+        <td data-label="<%= c.label %>">
+        <% if (c.type === 'thumb') { %><% if (v) { %><img class="thumb" src="/media/<%= v %>" alt="" width="48" height="36" loading="lazy"><% } else { %><span class="thumb thumb-ph"><%- icon('image', 16) %></span><% } %>
+        <% } else if (c.type === 'primary') { %><strong><%= v %></strong>
+        <% } else if (c.type === 'enum') { %><%= h.labelOf(c.options, v) %>
+        <% } else if (c.type === 'status') { %><span class="badge <%= v === 'PUBLISHED' ? 'badge-ok' : '' %>"><%= v === 'PUBLISHED' ? 'Published' : 'Draft' %></span>
+        <% } else if (c.type === 'bool') { %><%- v ? icon('check', 16, 'ok') : '<span class="muted">–</span>' %>
+        <% } else if (c.type === 'date') { %><%= h.formatDate(v) %>
+        <% } else { %><%= v %><% } %>
+        </td>
+      <% }) %>
+      <td class="actions-col">
+        <div class="row-actions">
+          <% if (cfg.reorder && can(cfg.perms.edit) && !q && !filterValue) { %>
+            <form method="post" action="<%= base %>/<%= it.id %>/move"><input type="hidden" name="_csrf" value="<%= csrfToken %>"><input type="hidden" name="dir" value="up"><button class="icon-btn" aria-label="Move up" title="Move up" <%= page === 1 && idx === 0 ? 'disabled' : '' %>><%- icon('up', 16) %></button></form>
+            <form method="post" action="<%= base %>/<%= it.id %>/move"><input type="hidden" name="_csrf" value="<%= csrfToken %>"><input type="hidden" name="dir" value="down"><button class="icon-btn" aria-label="Move down" title="Move down" <%= page === pages && idx === items.length - 1 ? 'disabled' : '' %>><%- icon('down', 16) %></button></form>
+          <% } %>
+          <% if (can(cfg.perms.edit)) { %><a class="icon-btn" href="<%= base %>/<%= it.id %>/edit" aria-label="Edit" title="Edit"><%- icon('edit', 16) %></a><% } %>
+          <% if (can(cfg.perms.delete)) { %>
+            <form method="post" action="<%= base %>/<%= it.id %>/delete" data-confirm="This permanently deletes this <%= cfg.singular %>."><input type="hidden" name="_csrf" value="<%= csrfToken %>"><button class="icon-btn icon-danger" aria-label="Delete" title="Delete"><%- icon('trash', 16) %></button></form>
+          <% } %>
+        </div>
+      </td>
+    </tr>
+  <% }) %>
+  </tbody></table></div></div>
+<%- include('../partials/pager', { query: { q: q, [cfg.filter ? cfg.filter.name : '_']: filterValue } }) %>
+<% } %>
